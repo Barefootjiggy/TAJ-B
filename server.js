@@ -9,7 +9,11 @@ dotenv.config(); // Load .env
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000", // Allow frontend dev server
+  methods: ["GET", "POST"],
+  credentials: true,
+}));
 app.use(bodyParser.json());
 
 app.post("/subscribe", async (req, res) => {
@@ -36,6 +40,13 @@ app.post("/subscribe", async (req, res) => {
     if (response.ok) {
       return res.status(200).json({ message: "Successfully subscribed!" });
     } else {
+      console.log("Mailchimp error response:", data);
+
+      // Return 409 Conflict for already-subscribed users
+      if (data.title === "Member Exists" || data.detail?.includes("already a list member")) {
+        return res.status(409).json({ message: "You're already subscribed!" });
+      }
+
       return res.status(400).json({ message: data.detail || "Subscription failed." });
     }
   } catch (error) {
@@ -44,10 +55,10 @@ app.post("/subscribe", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
-
 app.get("/", (req, res) => {
   res.send("🎉 Backend is running!");
+});
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
