@@ -74,10 +74,11 @@ app.post("/contact", async (req, res) => {
     });
 
     const mailOptions = {
-      from: email,
+      from: process.env.EMAIL_USER, // your authenticated Gmail
       to: process.env.EMAIL_TO,
       subject: `New message from ${name}`,
       text: message,
+      replyTo: email, // this is the user’s email
     };
 
     await transporter.sendMail(mailOptions);
