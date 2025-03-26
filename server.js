@@ -4,13 +4,13 @@ import bodyParser from "body-parser";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 
-dotenv.config(); // Load .env
+dotenv.config(); 
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: "http://localhost:3000", // Allow frontend dev server
+  origin: "http://localhost:3000", 
   methods: ["GET", "POST"],
   credentials: true,
 }));
@@ -55,7 +55,7 @@ app.post("/subscribe", async (req, res) => {
   }
 });
 
-import nodemailer from "nodemailer"; // Add this at the top with other imports
+import nodemailer from "nodemailer"; 
 
 app.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
@@ -66,7 +66,7 @@ app.post("/contact", async (req, res) => {
 
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail", // or your provider like "SendGrid", "Outlook", etc.
+      service: "gmail", 
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -74,11 +74,11 @@ app.post("/contact", async (req, res) => {
     });
 
     const mailOptions = {
-      from: process.env.EMAIL_USER, // your authenticated Gmail
+      from: process.env.EMAIL_USER, 
       to: process.env.EMAIL_TO,
       subject: `New message from ${name}`,
       text: message,
-      replyTo: email, // this is the user’s email
+      replyTo: email, 
     };
 
     await transporter.sendMail(mailOptions);
